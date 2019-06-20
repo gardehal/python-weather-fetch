@@ -11,5 +11,5 @@ A simple python program that fetches data from [MET Weather API](https://api.met
 Optional: [Define coordinates](https://www.latlong.net) for costum location
 
 ## Possible additions:
-- Might add more detailed info, max/min predicted temp, tomorrow instead fo next 24 etc
-- Option to add custom lat/lon (Getting coords from place name posibble though Google API, but is overkill)
+- Might add more detailed info, max/min predicted temp, weather forecast
+- tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
