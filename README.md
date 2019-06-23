@@ -1,6 +1,6 @@
-# python-simple-weather-fetch
+# python-weather-fetch
 
-A simple python program that fetches data from [MET Weather API](https://api.met.no/weatherapi) and returns current temp, temp for rest of the day, and temp for next 24 hours.
+A python program that fetches data from [MET Weather API](https://api.met.no/weatherapi) and returns current temp, temp for rest of the day, and temp for next 24 hours.
 
 ## Usage (Windows)
 1. [Install Python](https://www.python.org/downloads/)
@@ -10,6 +10,7 @@ A simple python program that fetches data from [MET Weather API](https://api.met
 
 Optional: [Define coordinates](https://www.latlong.net) for costum location
 
-## Possible additions:
-- Might add more detailed info, max/min predicted temp, weather forecast
+## TODO:
+- prog arguments
+- Add more detailed info, weather forecast
 - tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
