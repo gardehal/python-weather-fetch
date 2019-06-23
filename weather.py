@@ -19,20 +19,27 @@ elif(nArg == 2 or nArg > 3):
 
 # Fetch and parse
 # https://api.met.no/weatherapi/probabilityforecast/1.1/?lat=59.91&lon=10.75
+# https://api.met.no/weatherapi/locationforecast/1.9/?lat=59.91&lon=10.75
 print("Fetching data...")
 
 try:
-    url = "https://api.met.no/weatherapi/probabilityforecast/1.1/?lat=" + lat + "&lon=" + lon
-    response = urlopen(url).read()
-    parsed = ET.fromstring(response)
-    times = parsed.findall("product/time")
+    probabilityUrl = "https://api.met.no/weatherapi/probabilityforecast/1.1/?lat=" + lat + "&lon=" + lon
+    forecastUrl = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + lat + "&lon=" + lon
+
+    probabilityResponse = urlopen(probabilityUrl).read()
+    # forecastResponse = urlopen(forecastUrl).read()
+    
+    probabilityParsed = ET.fromstring(probabilityResponse)
+    # forecastParsed = ET.fromstring(forecastResponse)
+
+    times = probabilityParsed.findall("product/time")
     firstResp = times[0].findall("location/probability")
 except:
     print("An error occurred fetching the data. Please make sure your coordinates are correct and within Norwegian territory.")
     quit()
 
 # Time generated
-generated = parsed.get("created")
+generated = probabilityParsed.get("created")
 generated = generated.replace("T", ", ")
 generated = generated.replace("Z", "")
 
@@ -70,7 +77,7 @@ while i < len(dayResp):
         tmpValue += float(tmpProbability[j].get("value"))
         j += 1
     
-    dayArray.append(dayTimeFrom[1][0:5] + " - %.2f C" %float(tmpValue / j))
+    dayArray.append(dayTimeFrom[1][0:5] + " - avg: %.2f C, max: %.2f C, min: %.2f C" %(float(tmpValue / j), float(tmpProbability[0].get("value")), float(tmpProbability[len(tmpProbability) - 1].get("value"))))
     
     i += 1
 
@@ -91,7 +98,7 @@ while i < len(tomorrowResp):
         tmpValue += float(tmpProbability[j].get("value"))
         j += 1
     
-    tomorrowArray.append(tomorrowTimeFrom[1][0:5] + " - %.2f C" %float(tmpValue / j))
+    tomorrowArray.append(tomorrowTimeFrom[1][0:5] + " - avg: %.2f C, max: %.2f C, min: %.2f C" %(float(tmpValue / j), float(tmpProbability[0].get("value")), float(tmpProbability[len(tmpProbability) - 1].get("value"))))
     i += 1
 
 # Print
@@ -106,7 +113,7 @@ while i < len(dayArray):
     print(dayArray[i])
     i += 1
 
-print("\nNext 24 hours")
+print("\nTomorrow")
 
 i = 0
 while i < len(tomorrowArray):
