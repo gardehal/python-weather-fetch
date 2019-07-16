@@ -2,6 +2,7 @@ import sys
 from urllib.request import urlopen
 import xml.etree.ElementTree as ET
 from datetime import datetime
+import util
 
 # Check if googlemaps is installed, if not, skip code which require it
 # Based on code from rakslices answer from https://stackoverflow.com/questions/50844210/check-if-pip-is-installed-on-windows-using-python-subprocess
@@ -27,7 +28,8 @@ lon = "10.75"
 if(nArg == 2):
     if(googlemaps_present):
         try:
-            geocode_res = gmaps_key.geocode(sys.argv[1])
+            geocode_res = gmaps_key.geocode(sys.argv[1] + " norway")
+            # print(geocode_res[0])
             print("Showing results for: " + geocode_res[0]["formatted_address"])
             lat = "%.2f"%(geocode_res[0]["geometry"]["location"]["lat"])
             lon = "%.2f"%(geocode_res[0]["geometry"]["location"]["lng"])
@@ -52,28 +54,28 @@ elif(nArg > 3):
 print("Fetching data...")
 
 try:
-    probabilityUrl = "https://api.met.no/weatherapi/probabilityforecast/1.1/?lat=" + lat + "&lon=" + lon
     forecastUrl = "https://api.met.no/weatherapi/locationforecast/1.9/?lat=" + lat + "&lon=" + lon
 
-    probabilityResponse = urlopen(probabilityUrl).read()
-    # forecastResponse = urlopen(forecastUrl).read()
-    
-    probabilityParsed = ET.fromstring(probabilityResponse)
-    # forecastParsed = ET.fromstring(forecastResponse)
-
-    times = probabilityParsed.findall("product/time")
-    firstResp = times[0].findall("location/probability")
+    forecastResponse = urlopen(forecastUrl).read()
+    forecastParsed = ET.fromstring(forecastResponse)
+    posts = forecastParsed.findall("product/time")
 except:
     print("An error occurred fetching the data. Please make sure your coordinates are correct and within Norwegian territory.")
     quit()
 
 # Time generated
-generated = probabilityParsed.get("created")
+generated = forecastParsed.get("created")
 generated = generated.replace("T", ", ")
 generated = generated.replace("Z", "")
 
 # Get average temp now (earliest entry)
 print("Extracting data...")
+
+# TODO: test
+# 
+x = util.Util.praseForecast(posts[0])
+util.Util.printForecast(x)
+quit()
 
 averageNow = 0
 
@@ -110,26 +112,6 @@ while i < len(dayResp):
     
     i += 1
 
-# Get temps for tomorrow
-tomorrowArray = []
-end = restDayIndex + 4
-tomorrowResp = times[restDayIndex:end]
-
-i = 0
-while i < len(tomorrowResp):
-    # print("Checking: " + str(tomorrowResp[i].get("from")))
-    tomorrowTimeFrom = tomorrowResp[i].get("from").split("T")
-    tmpProbability = tomorrowResp[i].findall("location/probability")
-    
-    j = 0
-    tmpValue = 0
-    while j < len(tmpProbability):
-        tmpValue += float(tmpProbability[j].get("value"))
-        j += 1
-    
-    tomorrowArray.append(tomorrowTimeFrom[1][0:5] + " - avg: %.2f C, max: %.2f C, min: %.2f C" %(float(tmpValue / j), float(tmpProbability[0].get("value")), float(tmpProbability[len(tmpProbability) - 1].get("value"))))
-    i += 1
-
 # Print
 print("Generated at " + generated)
 
@@ -140,11 +122,4 @@ print("\nRest of day")
 i = 0
 while i < len(dayArray):
     print(dayArray[i])
-    i += 1
-
-print("\nTomorrow")
-
-i = 0
-while i < len(tomorrowArray):
-    print(tomorrowArray[i])
     i += 1
