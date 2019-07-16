@@ -3,18 +3,47 @@ from urllib.request import urlopen
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
+# Check if googlemaps is installed, if not, skip code which require it
+# Based on code from rakslices answer from https://stackoverflow.com/questions/50844210/check-if-pip-is-installed-on-windows-using-python-subprocess
+googlemaps_present = True
+try:
+    import googlemaps
+    from env import gmap_key_key
+    gmaps_key = googlemaps.Client(key = gmap_key_key)
+except ImportError:
+    googlemaps_present = False
+
+nArg = len(sys.argv)
+
+print("Getting location...")
+
+# Default lat/lon
 # Coordinates
 # Oslo
 lat = "59.91"
 lon = "10.75"
 
-nArg = len(sys.argv)
-
-if(nArg == 3):
-    lat = sys.argv[1]
-    lon = sys.argv[2]
-elif(nArg == 2 or nArg > 3):
-    print("Incorrect number of arguments, expecting 1 (filename), or 3 (filename, lat, long)")
+# Use Google maps API to search placename and get coordinates
+if(nArg == 2):
+    if(googlemaps_present):
+        try:
+            geocode_res = gmaps_key.geocode(sys.argv[1])
+            print("Showing results for: " + geocode_res[0]["formatted_address"])
+            lat = "%.2f"%(geocode_res[0]["geometry"]["location"]["lat"])
+            lon = "%.2f"%(geocode_res[0]["geometry"]["location"]["lng"])
+        except:
+            print("There was an error getting the coordinates from the placename.")
+            quit()
+    else:
+        print("Google maps is not installed and can therefore not be used. Please see README.md for more information.")
+        quit()
+# Use coordinates from arguments
+elif(nArg == 3):
+    lat = "%.2f"%(float(sys.argv[1]))
+    lon = "%.2f"%(float(sys.argv[2]))
+# Invalid, inform and quit
+elif(nArg > 3):
+    print("Incorrect number of arguments, expecting 1 (filename), 2(filename, location), or 3 (filename, lat, long)")
     quit()
 
 # Fetch and parse
