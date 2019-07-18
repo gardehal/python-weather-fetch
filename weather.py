@@ -18,11 +18,14 @@ nArg = len(sys.argv)
 
 print("Getting location...")
 
-# Default lat/lon
+# Defaults
 # Coordinates
 # Oslo
 lat = "59.91"
 lon = "10.75"
+
+logId = 1
+printDays = 2
 
 # Use Google maps API to search placename and get coordinates
 if(nArg == 2):
@@ -68,58 +71,52 @@ generated = forecastParsed.get("created")
 generated = generated.replace("T", ", ")
 generated = generated.replace("Z", "")
 
-# Get average temp now (earliest entry)
+# Get current time
+currenttime = str(datetime.now().time())
+currenthours = int(currenttime[0:2])
+if(currenthours < 10):
+    currenthours = "0" + str(currenthours)
+
+xxx = False
+
 print("Extracting data...")
 
-# TODO: test
-# 
-x = util.Util.praseForecast(posts[0])
-util.Util.printForecast(x)
-quit()
+print("Generated: \t" + generated)
 
-averageNow = 0
-
+# Get major post for current time (latest hour)
+print("\nCurrently:")
 i = 0
-while i < len(firstResp):
-    averageNow += float(firstResp[i].get("value"))
-    i += 1
+while i < 32:
+    parsed = util.Util.praseForecast(posts[i])
 
-nFirstResp = i
-
-# Get temps for rest of day
-dayArray = []
-dayResp = times[0:4]
-restDayIndex = 0
-
-i = 0
-while i < len(dayResp):
-    # print("Checking: " + str(dayResp[i].get("from")))
-    dayTimeFrom = dayResp[i].get("from").split("T")
-
-    if(int(dayTimeFrom[1][0:2]) == 00):
+    if("temprature" in parsed and parsed["time"][11:13] == currenthours):
+        util.Util.printForecast(parsed, logId)
         break
-
-    restDayIndex += 1
-    tmpProbability = dayResp[i].findall("location/probability")
-    
-    j = 0
-    tmpValue = 0
-    while j < len(tmpProbability):
-        tmpValue += float(tmpProbability[j].get("value"))
-        j += 1
-    
-    dayArray.append(dayTimeFrom[1][0:5] + " - avg: %.2f C, max: %.2f C, min: %.2f C" %(float(tmpValue / j), float(tmpProbability[0].get("value")), float(tmpProbability[len(tmpProbability) - 1].get("value"))))
     
     i += 1
 
-# Print
-print("Generated at " + generated)
+print("\nRest of day:")
 
-print("\nCurrently %.2f C" %(averageNow / nFirstResp))
-
-print("\nRest of day")
-
+# TODO getting the index right, taking logid into account
 i = 0
-while i < len(dayArray):
-    print(dayArray[i])
+n = 0
+while i < 32:
+    parsed = util.Util.praseForecast(posts[i])
+
+    print(parsed["time"] + ": " + parsed["time"][11:13])
+    print(currenthours)
+
+    if(parsed["time"][11:13] > currenthours):
+        xxx = True
+    
+    if(xxx):
+        util.Util.printForecast(parsed, logId)
+
+    # if("temperature" in parsed):
+    #     util.Util.printForecast(parsed, logId)
+    #     n += 1
+
     i += 1
+
+    
+# print("X days forward:")

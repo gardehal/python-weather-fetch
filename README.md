@@ -17,9 +17,7 @@ Optional: Add Googlemaps to enter placename for custom location (remember quotes
 3. Make a file to hold the key or paste the key directly into the project in place of "gmap_key_key"
 4. $ python weather.py "Henrik Ibsens gate 1"
 
-## TODO:
-- add the rest of forecast fields to parse and print (might not use but add anyway)
-- check if field is present in print
+### TODO:
 - print current, paginate and print days
 - prog arguments
 - Add more detailed info, weather forecast
