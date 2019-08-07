@@ -1,3 +1,5 @@
+import sys
+
 class Util:
     def praseForecast(post):
         d = dict()
@@ -82,53 +84,58 @@ class Util:
 
         return d
 
-    def printForecast(forecast, logId):
+    def formatForecast(forecast, logId):
         fromTime = forecast["time"].replace("T", ", ")
         fromTime = fromTime.replace("Z", "")
-        mps = " meters per second "
 
-        print("\nFrom: \t\t" + fromTime)
+        mps = " meters per second "
+        endl = "\n"
+        printString = ""
+
+        printString += ("From: \t\t" + fromTime + endl)
 
         if("temperature" in forecast):
-            print("Temperature: \t" + forecast["temperature"] + " " + forecast["temperatureUnit"])
+            printString += ("Temperature: \t" + forecast["temperature"] + " " + forecast["temperatureUnit"] + endl)
             
         if("minTemperature" in forecast and logId > 0):
-            print("\tMinimum: \t" + forecast["minTemperature"] + " " + forecast["minTemperatureUnit"])
-            print("\tMaximum: \t" + forecast["maxTemperature"] + " " + forecast["maxTemperatureUnit"])
+            printString += ("\tMinimum: \t" + forecast["minTemperature"] + " " + forecast["minTemperatureUnit"] + endl)
+            printString += ("\tMaximum: \t" + forecast["maxTemperature"] + " " + forecast["maxTemperatureUnit"] + endl)
             
         # Not using forecast["windSpeedBeaufort"] or forecast["areaMaxWindSpeed"]
         if("windSpeedName" in forecast):
-            print("Wind: \t\t" + forecast["windSpeedName"] + ": " + forecast["windSpeedMps"] + mps + "from " + forecast["windDirectionDeg"] + " degrees (" + forecast["windDirectionName"] + ")")
+            printString += ("Wind: \t\t" + forecast["windSpeedName"] + ": " + forecast["windSpeedMps"] + mps + "from " + forecast["windDirectionDeg"] + " degrees (" + forecast["windDirectionName"] + ")" + endl)
 
         if("windSpeedName" in forecast and logId > 0):
-            print("Gusts: \t\t" + forecast["windGust"] + mps)
+            printString += ("Gusts: \t\t" + forecast["windGust"] + mps + endl)
     
         if("humidity" in forecast and logId > 0):
-            print("Humidity: \t" + forecast["humidity"] + " " + forecast["humidityUnit"])
+            printString += ("Humidity: \t" + forecast["humidity"] + " " + forecast["humidityUnit"] + endl)
             
         if("dewpointTemperature" in forecast and logId > 1):
-            print("Dewpoint: \t" + forecast["dewpointTemperature"] + " " + forecast["dewpointTemperatureUnit"])
+            printString += ("Dewpoint: \t" + forecast["dewpointTemperature"] + " " + forecast["dewpointTemperatureUnit"] + endl)
             
         if("pressure" in forecast and logId > 1):
-            print("Pressure: \t" + forecast["pressure"] + " " + forecast["pressureUnit"])
+            printString += ("Pressure: \t" + forecast["pressure"] + " " + forecast["pressureUnit"] + endl)
             
         if("fog" in forecast and logId > 1):
-            print("Fog: \t\t" + forecast["fog"] + " %")
+            printString += ("Fog: \t\t" + forecast["fog"] + " %" + endl)
             
         if("cloudiness" in forecast and logId > 0):
-            print("Cloudiness: \t" + forecast["cloudiness"] + " %")
+            printString += ("Cloudiness: \t" + forecast["cloudiness"] + " %" + endl)
 
         if("lowClouds" in forecast and logId > 1): 
-            print("Low clouds: \t" + forecast["lowClouds"] + " %")
+            printString += ("Low clouds: \t" + forecast["lowClouds"] + " %" + endl)
 
         if("mediumClouds" in forecast and logId > 1): 
-            print("Medium clouds: \t" + forecast["mediumClouds"] + " %")
+            printString += ("Medium clouds: \t" + forecast["mediumClouds"] + " %" + endl)
 
         if("highClouds" in forecast and logId > 1): 
-            print("High clouds: \t" + forecast["highClouds"] + " %")
+            printString += ("High clouds: \t" + forecast["highClouds"] + " %" + endl)
             
         if("precipitationMin" in forecast and logId > 0):
-            print("Precipitation: \t" + forecast["precipitationMin"] + " " + forecast["precipitationUnit"] + " - " + forecast["precipitationMax"] + " " + forecast["precipitationUnit"])
+            printString += ("Precipitation: \t" + forecast["precipitationMin"] + " " + forecast["precipitationUnit"] + " - " + forecast["precipitationMax"] + " " + forecast["precipitationUnit"] + endl)
             
         if("symbolId" in forecast and logId > 0):
-            print("Symbol: \t" + forecast["symbolId"] + ": " + forecast["symbolNumber"])
+            printString += ("Symbol: \t" + forecast["symbolId"] + ": " + forecast["symbolNumber"] + endl)
+
+        return printString
