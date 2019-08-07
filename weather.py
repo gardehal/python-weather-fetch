@@ -58,9 +58,24 @@ while iArg < nArg:
         autoUpdate = True
         
         iArg += 1
+    # Help
+    elif(arg == "-h" or arg == "-help"):
+        print("--- Help ---")
+        print("To use Google Maps Geocoding API you must install it on your computer. This is optional and the guide is in \"readme.md\"")
+        print("Fetch uses Metrologisk Institutt API and can only fetch weather from Norwegian territory.")
+        print("Run by following \"Usage\" instructions in \"readme.md\" then enter:")
+        print("\t$ python weather.py")
+        print("Running without any further arguments defaults to getting weather in Oslo, Norway.")
+        print("The following are the optional arguments implemented:")
+        print("\t\"-placename\" or \"-pn\" + [String]: uses Google Maps Geocoding API to search for the string, and fetches the forecast for that place.  For multiple words, use quotes (\"place name\").")
+        print("\t\"-coordinates\" or \"-c\" + [Float] [Float]: fetches the forecast for the place at coordinates.")
+        print("\t\"-update\" or \"-u\": fetches the current forecast and updates hourly with the respective forecast.")
+        print("\t\"-help\" or \"-h\": prints this help text.")
+        
+        quit()
     # Invalid, inform and quit
     else:
-        print("Incorrect number of arguments, expecting 1 (filename), 2(filename, location), or 3 (filename, lat, long)")
+        print("Argument not recognized: \"" + arg + "\", please see documentation or run with \"-help\" for help.")
         quit()
     iArg += 1
 

@@ -8,19 +8,27 @@ A simple python program that fetches data from [MET Weather API](https://api.met
 3. Navigate to folder in CLI
 4. $ python weather.py [arguments...]
 
-Optional: [Define coordinates](https://www.latlong.net) for custom location
-- $ python weather.py 59.91 10.75
-
 Optional: Add Googlemaps to enter placename for custom location (remember quotes for multiple words)
 1. Install Googlemaps with PiP: $ python -m pip install googlemaps
 2. [Get your Google Maps API key](https://cloud.google.com/maps-platform/) or check [this guide](https://developers.google.com/maps/documentation/javascript/get-api-key)
 3. Make a file to hold the key or paste the key directly into the project in place of "gmap_key_key"
 4. $ python weather.py "Henrik Ibsens gate 1"
 
+## Help
+- To use Googles Geocoding API you must install it on your computer. This is optional and the guide is in "readme.md"
+- Fetch uses Metrologisk Institutt API and can only fetch weather from Norwegian territory. 
+- Run by following "Usage" instructions in "readme.md" then enter:
+- - $ python weather.py
+- Running without any further arguments defaults to getting weather in Oslo, Norway.
+- The following are the optional arguments implemented:
+- - "-placename" or "-pn" + [String]: uses Google Maps Geocoding API to search for the string, and fetches the forecast for that place. For multiple words, use quotes ("place name").
+- - "-coordinates" or "-c" + [Float] [Float]: fetches the forecast for the place at coordinates.
+- - "-update" or "-u": fetches the current forecast and updates hourly with the respective forecast.
+- - "-help" or "-h": prints this help text.
+
 ### TODO:
 - print current, paginate and print days
 - prog arguments
-- Add more detailed info, weather forecast
 - tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
 - check spelling
 
