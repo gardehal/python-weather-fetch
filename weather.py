@@ -1,7 +1,6 @@
 import sys
 from urllib.request import urlopen
 import xml.etree.ElementTree as ET
-from datetime import datetime
 import util
 import time
 
@@ -85,74 +84,97 @@ generated = forecastParsed.get("created")
 generated = generated.replace("T", ", ")
 generated = generated.replace("Z", "")
 
-# Get current time
-currenttime = str(datetime.now().time())
-currenthours = int(currenttime[0:2])
-if(currenthours < 10):
-    currenthours = "0" + str(currenthours)
-
-xxx = False
-
-# TODO need to change order of post chrono, might as well do that first and rework little work
+# Get hours
+currenthour = util.Util.getHour()
 
 print("Extracting data...")
 
 print("Generated: \t" + generated)
 
-# TODO tome sleep for 59 min then 30 30 30.. until update hour updated
+# When ran with -u flag, check every 5 minutes if hour have updated, if true, print new post
 if(autoUpdate):
-    i = 0
+    # Outer loop for major posts
+    i = 5
     while i < i + 1:
         print("\n" * 16)
         print("Automatically updating every hour. \n")
             
         try:
+            # Inner loop for getting the minor posts between majors
             j = 0
             while j < 5:
-                post = util.Util.formatForecast(util.Util.praseForecast(posts[i + j]), logId)
+                currenthour = util.Util.getHour()
+                parsed = util.Util.praseForecast(posts[i + j])
 
-                if(j > 1 and len(post) > 256):
+                # Sleep when we reach the next major post
+                if(int(parsed["time"][11:13]) > currenthour and "temprature" not in parsed):
+                    time.sleep(300)
+                    continue
+
+                # Continue outer loop if we reach a major post prematurely
+                if(j > 1 and "temprature" in parsed):
                     raise StopIteration
                     
+                post = util.Util.formatForecast(parsed, logId)
                 print(post)
 
                 j += 1
         except StopIteration:
-            print("idk")
+            uselessVar = True
 
-        time.sleep(2)
+        # TODO
+        # if(i - 5 > len(totalPosts))
+            # quit, rerun, or fetch more
+
         i += j
 
-# Get major post for current time (latest hour)
+# Get major and one minor post for current time (latest hour)
 print("\nCurrently:")
+    
 i = 0
+j = 0
 while i < 32:
     parsed = util.Util.praseForecast(posts[i])
 
-    if("temprature" in parsed and parsed["time"][11:13] == currenthours):
-        util.Util.formatForecast(parsed, logId)
+    if(int(parsed["time"][11:13]) == currenthour):
+        post = util.Util.formatForecast(parsed, logId)
+        print(post)
+        j += 1
+
+    if(j > 1):
         break
-    
+
     i += 1
-
-print("\nRest of day:")
-
-# TODO getting the index right, taking logid into account
+    
+# Print next 11 hours
+print("\n6 hours forward:")
+nHour = currenthour + 1
 i = 0
-n = 0
-while i < 32:
-    parsed = util.Util.praseForecast(posts[i])
+while i < 12:
+    # print("i " + str(i))
+    # print("hour " + str(nHour))
+    j = 0
+    k = 0
+    while j < 64:
+        # print("j " + str(j))
+        parsed = util.Util.praseForecast(posts[i + j])
+        if(int(parsed["time"][11:13]) == nHour and k < 2):
+            post = util.Util.formatForecast(parsed, logId)
+            print(post)
+            k += 1
+            # print("ok " + str(i) + " " + str(j))
+        elif(k > 1):
+            j = 64
 
-    print(parsed["time"] + ": " + parsed["time"][11:13])
-    print(currenthours)
+        j += 1
 
-    util.Util.formatForecast(parsed, logId)
-
-    # if("temperature" in parsed):
-    #     util.Util.formatForecast(parsed, logId)
-    #     n += 1
-
+    nHour += 1
+    if(nHour > 23):
+        nHour = 0
     i += 1
 
-    
-# print("X days forward:")
+# TODO  
+# print("X hours forward:")
+
+# TODO
+# print("X days simplified/collated data")

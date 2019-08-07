@@ -1,4 +1,5 @@
 import sys
+from datetime import datetime
 
 class Util:
     def praseForecast(post):
@@ -139,3 +140,12 @@ class Util:
             printString += ("Symbol: \t" + forecast["symbolId"] + ": " + forecast["symbolNumber"] + endl)
 
         return printString
+
+    # Get current hour only
+    def getHour():
+        currenttime = str(datetime.now().time())
+        currenthours = int(currenttime[0:2])
+        if(currenthours < 10):
+            currenthours = "0" + str(currenthours)
+
+        return int(currenthours)
