@@ -16,8 +16,6 @@ except ImportError:
 
 nArg = len(sys.argv)
 
-print("Getting location...")
-
 # Defaults
 # Coordinates
 # Oslo
@@ -34,6 +32,7 @@ while iArg < nArg:
     if(arg == "-pn" or arg == "-placename"):
         if(googlemaps_present):
             try:
+                print("Getting location...")
                 geocode_res = gmaps_key.geocode(sys.argv[iArg + 1] + " norway")
                 # print(geocode_res[0])
                 print("Showing results for: " + geocode_res[0]["formatted_address"])
@@ -118,11 +117,11 @@ if(autoUpdate):
             # Inner loop for getting the minor posts between majors
             j = 0
             while j < 5:
-                currenthour = util.Util.getHour()
+                nextHour = util.Util.getHour() + 1
                 parsed = util.Util.praseForecast(posts[i + j])
 
                 # Sleep when we reach the next major post
-                if(int(parsed["time"][11:13]) > currenthour and "temprature" not in parsed):
+                if(int(parsed["time"][11:13]) > nextHour and "temprature" not in parsed):
                     time.sleep(300)
                     continue
 
@@ -162,7 +161,7 @@ while i < 32:
     i += 1
     
 # Print next 11 hours
-print("\n6 hours forward:")
+print("\n12 hours forward:")
 nHour = currenthour + 1
 i = 0
 while i < 12:

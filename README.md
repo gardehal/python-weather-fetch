@@ -21,19 +21,18 @@ Optional: Add Googlemaps to enter placename for custom location (remember quotes
 - - $ python weather.py
 - Running without any further arguments defaults to getting weather in Oslo, Norway.
 - The following are the optional arguments implemented:
-- - "-placename" or "-pn" + [String]: uses Google Maps Geocoding API to search for the string, and fetches the forecast for that place. For multiple words, use quotes ("place name").
-- - "-coordinates" or "-c" + [Float] [Float]: fetches the forecast for the place at coordinates.
+- - "-placename" or "-pn" + [String]: uses Google Maps Geocoding API to search for the [String], and fetches the forecast for that place. For multiple words, use quotes ("place name").
+- - "-coordinates" or "-c" + [Float] [Float]: fetches the forecast for the place at [Float] [Float] coordinates.
 - - "-update" or "-u": fetches the current forecast and updates hourly with the respective forecast.
 - - "-help" or "-h": prints this help text.
 
-### TODO:
-- print current, paginate and print days
-- prog arguments
-- tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
-- check spelling
-
-### My Thoughts
+## My Thoughts
 
 I wanted to begin to learn Python as I've seen some buzz around it but never got much information though education, also wanting to monitor the weather with more ease I decided to make a small commandline program to fetch some info from an API and print it.
 
 The more I used the program the more I felt it could be improved and give more and more detailed information to give a better overview of the weather and for longer.
+
+### TODO:
+- paginate and print days
+- tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
+- check spelling
