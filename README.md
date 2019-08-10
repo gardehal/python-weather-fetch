@@ -33,6 +33,8 @@ I wanted to begin to learn Python as I've seen some buzz around it but never got
 The more I used the program the more I felt it could be improved and give more and more detailed information to give a better overview of the weather and for longer.
 
 ### TODO:
+- got -2 hours posts and did not update when given new hour (10th aug), recheck if fixed at midnight
+- hitting 23 +1 pritns the rest of the array (24 post per day, 3 days)
 - paginate and print days
 - tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
 - check spelling

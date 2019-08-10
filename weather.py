@@ -107,8 +107,8 @@ print("Generated: \t" + generated)
 
 # When ran with -u flag, check every 5 minutes if hour have updated, if true, print new post
 if(autoUpdate):
-    # Outer loop for major posts
-    i = 5
+    # Outer loop for number of printed instances
+    i = 10
     while i < i + 1:
         print("\n" * 16)
         print("Automatically updating every hour. \n")
@@ -116,8 +116,12 @@ if(autoUpdate):
         try:
             # Inner loop for getting the minor posts between majors
             j = 0
-            while j < 5:
+            while j < 4:
                 nextHour = util.Util.getHour() + 1
+                
+                if(nextHour > 23):
+                    nextHour = 0
+
                 parsed = util.Util.praseForecast(posts[i + j])
 
                 # Sleep when we reach the next major post
