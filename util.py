@@ -9,6 +9,24 @@ class Util:
         d["time"] = post.get("from")
 
         # Main posts
+
+        # <time datatype="forecast" from="2019-09-24T12:00:00Z" to="2019-09-24T12:00:00Z">
+        #     <location altitude="2" latitude="59.9100" longitude="10.7500">
+        #         <temperature id="TTT" unit="celsius" value="12.6"/>
+        #         <windDirection id="dd" deg="121.5" name="SE"/>
+        #         <windSpeed id="ff" mps="2.6" beaufort="2" name="Svak vind"/>
+        #         <humidity value="69.0" unit="percent"/>
+        #         <pressure id="pr" unit="hPa" value="1018.0"/>
+        #         <cloudiness id="NN" percent="95.3"/>
+        #         <lowClouds id="LOW" percent="93.0"/>
+        #         <mediumClouds id="MEDIUM" percent="0.0"/>
+        #         <highClouds id="HIGH" percent="0.0"/>
+        #         <temperatureProbability unit="probabilitycode" value="1"/>
+        #         <windProbability unit="probabilitycode" value="0"/>
+        #         <dewpointTemperature id="TD" unit="celsius" value="7.1"/>
+        #     </location>
+        # </time>
+
         temperature = location.find("temperature")
         if(location.findall("temperature")):
             d["temperature"] = temperature.get("value")
@@ -62,10 +80,20 @@ class Util:
             d["dewpointTemperatureUnit"] = dewpointTemperature.get("unit")
 
         # Minor posts
+        
+        # <time datatype="forecast" from="2019-09-24T06:00:00Z" to="2019-09-24T12:00:00Z">
+        #     <location altitude="2" latitude="59.9100" longitude="10.7500">
+        #         <precipitation unit="mm" value="0.0"/>
+        #         <minTemperature id="TTT" unit="celsius" value="8.2"/>
+        #         <maxTemperature id="TTT" unit="celsius" value="12.6"/>
+        #         <symbol id="PartlyCloud" number="3"/>
+        #         <symbolProbability unit="probabilitycode" value="0"/>
+        #     </location>
+        # </time>
+
         precipitation = location.find("precipitation")
         if(location.findall("precipitation")):
-            d["precipitationMin"] = precipitation.get("minvalue")
-            d["precipitationMax"] = precipitation.get("maxvalue")
+            d["value"] = precipitation.get("value")
             d["precipitationUnit"] = precipitation.get("unit")
 
         symbol = location.find("symbol")

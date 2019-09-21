@@ -25,6 +25,8 @@ lon = "10.75"
 logId = 2
 printDays = 2
 autoUpdate = False
+simpleData = False
+simpleDataCollations = 4
 
 iArg = 1
 while iArg < nArg:
@@ -46,17 +48,30 @@ while iArg < nArg:
         else:
             print("Google maps is not installed and can therefore not be used. Please see README.md for more information.")
             quit()
+
     # Use coordinates from arguments
     elif(arg == "-c" or arg == "-coordinates"):
         lat = "%.2f"%(float(sys.argv[iArg + 1]))
         lon = "%.2f"%(float(sys.argv[iArg + 2]))
         
         iArg += 2
+
     # Enable automatic update for current and next hour
     elif(arg == "-u" or arg == "-update"):
         autoUpdate = True
         
         iArg += 1
+
+    # Print data in a simplified format
+    elif(arg == "-s" or arg == "-simple"):
+        simpleData = True
+
+        if(nArg > iArg + 1):
+            simpleDataCollations = sys.argv[iArg + 1]
+            iArg += 1
+        
+        iArg += 1
+
     # Help
     elif(arg == "-h" or arg == "-help"):
         print("--- Help ---")
@@ -72,6 +87,7 @@ while iArg < nArg:
         print("\t\"-help\" or \"-h\": prints this help text.")
         
         quit()
+
     # Invalid, inform and quit
     else:
         print("Argument not recognized: \"" + arg + "\", please see documentation or run with \"-help\" for help.")
@@ -102,13 +118,12 @@ generated = generated.replace("Z", "")
 currenthour = util.Util.getHour()
 
 print("Extracting data...")
-
 print("Generated: \t" + generated)
 
-# When ran with -u flag, check every 5 minutes if hour have updated, if true, print new post
+# When ran with -u flag, check every few minutes if hour have updated, if true print new post
 if(autoUpdate):
     # Outer loop for number of printed instances
-    i = 10
+    i = 15
     while i < i + 1:
         print("\n" * 16)
         print("Automatically updating every hour. \n")
@@ -116,21 +131,30 @@ if(autoUpdate):
         try:
             # Inner loop for getting the minor posts between majors
             j = 0
-            while j < 4:
+            while j < 5:
                 nextHour = util.Util.getHour() + 1
-                
+
+                # probs with nexth > 23, or nexhour = 01 compared to posts[0]["time"] = 23
+                # ++i?
+
                 if(nextHour > 23):
                     nextHour = 0
+
+                # print("nex " + str(nextHour))
+                # print("i " + str(i))
+                # print("j " + str(j))
 
                 parsed = util.Util.praseForecast(posts[i + j])
 
                 # Sleep when we reach the next major post
                 if(int(parsed["time"][11:13]) > nextHour and "temprature" not in parsed):
                     time.sleep(300)
+                    # print("continue")
                     continue
 
                 # Continue outer loop if we reach a major post prematurely
                 if(j > 1 and "temprature" in parsed):
+                    print("break")
                     raise StopIteration
                     
                 post = util.Util.formatForecast(parsed, logId)
@@ -144,7 +168,95 @@ if(autoUpdate):
         # if(i - 5 > len(totalPosts))
             # quit, rerun, or fetch more
 
+        # TODO
+        # When hour first updated, reset sleeper to 59 min to reduce check and resources used
+
         i += j
+
+    quit()
+
+# Loop over data, one main post and minor posts up to the next main post i one set
+# 6 sets of data is one collation (excluding the first collation, which can vary from 0 to 6 sets depending on when queried)
+# once a set is collected, increment J
+# Once we reach the next hour 24/00, 06, 12, or 18, print the collated data
+
+if(simpleData):
+
+    hourInterval = 6 # Range of hours, like 06 to 12 is 6 
+    simpleDataCollations = int(simpleDataCollations) # Number of posts printed
+    parsedPostsPerInstance = 8 # Number of posts in API read for each set of data (minimum 3, usually 4)
+
+    # Outer loop controlls printing when collation is complete
+    i = 0
+    simpleDataIndex = 0
+    while i < simpleDataCollations:
+        # Vars that will be displayed
+        date = 0
+        timeStart = 0
+        timeEnd = 0
+        temp = 0
+        wind = 0
+        prec = 0
+
+        # Helper vars
+        nTemp = 0
+        nWind = 0
+        nPrec = 0
+        nSets = 0
+        t = 25
+        doRecordTimeStart = True
+        
+        # Inner loop collects data
+        j = 0
+        while j < (hourInterval * parsedPostsPerInstance):
+            parsed = util.Util.praseForecast(posts[simpleDataIndex])
+
+            # Get timeStart of set
+            if(doRecordTimeStart):
+                timeStart = parsed["time"][11:16]
+                doRecordTimeStart = False
+
+            # Get timeEnd and date of set
+            if("humidity" in parsed):
+                timeEnd = parsed["time"][11:16] # will update the last a main post is detected, thus the lastest time in this instance
+                t = parsed["time"][11:13] 
+                date = parsed["time"][0:10]
+                nSets += 1
+            
+            # Get temperature from set
+            if("temperature" in parsed):
+                temp += float(parsed["temperature"])
+                nTemp += 1
+
+            # Get wind from set
+            if("windSpeedMps" in parsed):
+                wind +=  float(parsed["windSpeedMps"])
+                nWind += 1
+
+            # Get rain from set
+            if("value" in parsed):
+                prec += float(parsed["value"])
+                nPrec += 1
+                print("prec " + str(prec))
+                print("nprec " + str(nPrec))
+
+            # If the number of sets is equal to hour interval of simple data
+            if(nSets == hourInterval or int(t) % hourInterval == 0):
+                j += (hourInterval * parsedPostsPerInstance)
+
+            simpleDataIndex += 1
+
+            j += 1
+        
+        # The collation is complete, print
+        print("\n" + str(timeStart) + " - " + str(timeEnd) + " " + str(date)
+            + ("" if nTemp == 0 else "\nTemp: " + str(temp/nTemp)[0:5] + " C")
+            + ("" if nWind == 0 else "\nWind: " + str(wind/nWind)[0:5] + " mps")
+            + ("" if nPrec == 0 else "\nRain: " + str(prec/nPrec)[0:5] + " mm"))
+
+        i += 1
+
+    quit()
 
 # Get major and one minor post for current time (latest hour)
 print("\nCurrently:")
@@ -163,26 +275,23 @@ while i < 32:
         break
 
     i += 1
-    
-# Print next 11 hours
-print("\n12 hours forward:")
+
+# Print next 23 hours
+print("\n23 hours forward:")
 nHour = currenthour + 1
 i = 0
-while i < 12:
-    # print("i " + str(i))
-    # print("hour " + str(nHour))
+while i < 23:
     j = 0
     k = 0
-    while j < 64:
+    while j < 128:
         # print("j " + str(j))
         parsed = util.Util.praseForecast(posts[i + j])
         if(int(parsed["time"][11:13]) == nHour and k < 2):
             post = util.Util.formatForecast(parsed, logId)
             print(post)
             k += 1
-            # print("ok " + str(i) + " " + str(j))
         elif(k > 1):
-            j = 64
+            j = 128
 
         j += 1
 
@@ -192,7 +301,4 @@ while i < 12:
     i += 1
 
 # TODO  
-# print("X hours forward:")
-
-# TODO
-# print("X days simplified/collated data")
+# print("Print for hour X:")

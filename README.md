@@ -1,6 +1,6 @@
 # python-weather-fetch
 
-A simple python program that fetches data from [MET Weather API](https://api.met.no/weatherapi) and returns current temp, temp for rest of the day, and temp for next 24 hours.
+A simple python program that fetches data from [MET Weather API](https://api.met.no/weatherapi) and returns forecast in various forms.
 
 ## Usage (Windows)
 1. [Install Python](https://www.python.org/downloads/)
@@ -24,6 +24,7 @@ Optional: Add Googlemaps to enter placename for custom location (remember quotes
 - - "-placename" or "-pn" + [String]: uses Google Maps Geocoding API to search for the [String], and fetches the forecast for that place. For multiple words, use quotes ("place name").
 - - "-coordinates" or "-c" + [Float] [Float]: fetches the forecast for the place at [Float] [Float] coordinates.
 - - "-update" or "-u": fetches the current forecast and updates hourly with the respective forecast.
+- - "-simple" or "-s" + [int] (optional): prints data in a simplified format: time, temprature, wind, rain. Optional argument for number of data collation sets printed.
 - - "-help" or "-h": prints this help text.
 
 ## My Thoughts
@@ -33,8 +34,8 @@ I wanted to begin to learn Python as I've seen some buzz around it but never got
 The more I used the program the more I felt it could be improved and give more and more detailed information to give a better overview of the weather and for longer.
 
 ### TODO:
-- got -2 hours posts and did not update when given new hour (10th aug), recheck if fixed at midnight
-- hitting 23 +1 pritns the rest of the array (24 post per day, 3 days)
-- paginate and print days
-- tomorrow/week ahead/just weekend/vaiable number of days instead fo next 24 etc
+- API redesigned, need to adjust things
+- got -2 hours posts and did not update when given new hour (10th aug), recheck if fixed at midnight, (not fixed)
+- stopped at 8 posts, (probs paused as a background task by Windows), posted +4 (2 hours more than expected) when ctrl + c, when ran again, printed all posts in array
+- hitting 23 +1 prints the rest of the array (24 post per day, 3 days)
 - check spelling
