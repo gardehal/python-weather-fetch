@@ -83,6 +83,7 @@ while iArg < nArg:
         print("The following are the optional arguments implemented:")
         print("\t\"-placename\" or \"-pn\" + [String]: uses Google Maps Geocoding API to search for the string, and fetches the forecast for that place.  For multiple words, use quotes (\"place name\").")
         print("\t\"-coordinates\" or \"-c\" + [Float] [Float]: fetches the forecast for the place at coordinates.")
+        print("\t\"-simple\" or \"-s\" + [int] (optional): prints data in a simplified format: time, temprature, wind, rain. Optional argument for number of data collation sets printed.")
         print("\t\"-update\" or \"-u\": fetches the current forecast and updates hourly with the respective forecast.")
         print("\t\"-help\" or \"-h\": prints this help text.")
         
@@ -240,19 +241,19 @@ if(simpleData):
                 print("prec " + str(prec))
                 print("nprec " + str(nPrec))
 
-            # If the number of sets is equal to hour interval of simple data
-            if(nSets == hourInterval or int(t) % hourInterval == 0):
-                j += (hourInterval * parsedPostsPerInstance)
-
             simpleDataIndex += 1
 
             j += 1
+
+            # If the number of sets is equal to hour interval of simple data
+            if(nSets == hourInterval or int(t) % hourInterval == 0):
+                j += (hourInterval * parsedPostsPerInstance)
         
         # The collation is complete, print
         print("\n" + str(timeStart) + " - " + str(timeEnd) + " " + str(date)
-            + ("" if nTemp == 0 else "\nTemp: " + str(temp/nTemp)[0:5] + " C")
-            + ("" if nWind == 0 else "\nWind: " + str(wind/nWind)[0:5] + " mps")
-            + ("" if nPrec == 0 else "\nRain: " + str(prec/nPrec)[0:5] + " mm"))
+            + ("" if nTemp == 0 else "\nTemp: " + str(temp/nTemp)[0:4] + " C")
+            + ("" if nWind == 0 else "\nWind: " + str(wind/nWind)[0:4] + " mps")
+            + ("" if nPrec == 0 else "\nRain: " + str(prec/nPrec)[0:4] + " mm"))
 
         i += 1
 

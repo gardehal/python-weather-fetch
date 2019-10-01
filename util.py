@@ -93,7 +93,7 @@ class Util:
 
         precipitation = location.find("precipitation")
         if(location.findall("precipitation")):
-            d["value"] = precipitation.get("value")
+            d["precipitationValue"] = precipitation.get("value")
             d["precipitationUnit"] = precipitation.get("unit")
 
         symbol = location.find("symbol")
@@ -161,8 +161,8 @@ class Util:
         if("highClouds" in forecast and logId > 1): 
             printString += ("High clouds: \t" + forecast["highClouds"] + " %" + endl)
             
-        if("precipitationMin" in forecast and logId > 0):
-            printString += ("Precipitation: \t" + forecast["precipitationMin"] + " " + forecast["precipitationUnit"] + " - " + forecast["precipitationMax"] + " " + forecast["precipitationUnit"] + endl)
+        if("precipitationValue" in forecast and logId > 0):
+            printString += ("Precipitation: \t" + forecast["precipitationValue"] + " " + forecast["precipitationUnit"] + endl)
             
         if("symbolId" in forecast and logId > 0):
             printString += ("Symbol: \t" + forecast["symbolId"] + ": " + forecast["symbolNumber"] + endl)

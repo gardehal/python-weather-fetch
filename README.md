@@ -34,7 +34,6 @@ I wanted to begin to learn Python as I've seen some buzz around it but never got
 The more I used the program the more I felt it could be improved and give more and more detailed information to give a better overview of the weather and for longer.
 
 ### TODO:
-- API redesigned, need to adjust things
 - got -2 hours posts and did not update when given new hour (10th aug), recheck if fixed at midnight, (not fixed)
 - stopped at 8 posts, (probs paused as a background task by Windows), posted +4 (2 hours more than expected) when ctrl + c, when ran again, printed all posts in array
 - hitting 23 +1 prints the rest of the array (24 post per day, 3 days)
