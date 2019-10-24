@@ -27,6 +27,7 @@ printDays = 2
 autoUpdate = False
 simpleData = False
 simpleDataCollations = 4
+locationFilename = "locations.txt"
 
 iArg = 1
 while iArg < nArg:
@@ -71,6 +72,54 @@ while iArg < nArg:
             iArg += 1
         
         iArg += 1
+
+    # Save a location and cordinates for quick usage
+    elif(arg == "-sl" or arg == "-saveLocation"):
+        # If the remaining arguments are fewer than 3
+        if(nArg - iArg < 4): 
+            print("Too few arguments to save a location, need 3: name (string), latitude (float), longitude (float)")
+            quit()
+
+        try:
+            savePlacename = str(sys.argv[iArg + 1])
+            saveLat = "%.2f"%(float(sys.argv[iArg + 2]))
+            saveLon = "%.2f"%(float(sys.argv[iArg + 3]))
+        except ValueError:
+            print("Arguments to save location are not valid, must be name (string), latitude (float), longitude (float)")
+            quit()
+
+        toSave = savePlacename + " " + saveLat + " " + saveLon
+        res = util.Util.saveLocationToFile(locationFilename, toSave.lower())
+
+        print("Save location \"" + savePlacename + "\" " + ("successful." if res else "failed."))
+        # iArg += 4
+        quit()
+
+    # Save a location and cordinates for quick usage
+    elif(arg == "-ll" or arg == "-loadLocation"):
+        # If the remaining arguments are fewer than 1
+        if(nArg - iArg < 2): 
+            print("Too few arguments to save a location, need 1: name (string)")
+            quit()
+
+        try:
+            loadPlacename = str(sys.argv[iArg + 1])
+        except ValueError:
+            print("Arguments to save location are not valid, must be name (string)")
+            quit()
+        
+        print("Getting coordinates for \"" + loadPlacename + "\"")
+
+        res = util.Util.getLocaionFromFile(locationFilename, loadPlacename.lower())
+        if(res is None):
+            print("Could not load location")
+            quit()
+        else:
+            lat = res.split()[1]
+            lon = res.split()[2]
+        
+        iArg += 2
+        # quit()
 
     # Help
     elif(arg == "-h" or arg == "-help"):
@@ -266,6 +315,10 @@ i = 0
 j = 0
 while i < 32:
     parsed = util.Util.praseForecast(posts[i])
+    
+    if(len(parsed) < 1):
+        print("Error: could not get forecast")
+        quit()
 
     if(int(parsed["time"][11:13]) == currenthour):
         post = util.Util.formatForecast(parsed, logId)
@@ -287,6 +340,11 @@ while i < 23:
     while j < 128:
         # print("j " + str(j))
         parsed = util.Util.praseForecast(posts[i + j])
+
+        if(len(parsed) < 1):
+            print("Error: could not get forecast")
+            quit()
+
         if(int(parsed["time"][11:13]) == nHour and k < 2):
             post = util.Util.formatForecast(parsed, logId)
             print(post)

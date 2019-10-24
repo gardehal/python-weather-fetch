@@ -21,10 +21,12 @@ Optional: Add Googlemaps to enter placename for custom location (remember quotes
 - - $ python weather.py
 - Running without any further arguments defaults to getting weather in Oslo, Norway.
 - The following are the optional arguments implemented:
-- - "-placename" or "-pn" + [String]: uses Google Maps Geocoding API to search for the [String], and fetches the forecast for that place. For multiple words, use quotes ("place name").
-- - "-coordinates" or "-c" + [Float] [Float]: fetches the forecast for the place at [Float] [Float] coordinates.
+- - "-placename" or "-pn" + [string]: uses Google Maps Geocoding API to search for the [string], and fetches the forecast for that place. For multiple words, use quotes ("place name").
+- - "-coordinates" or "-c" + [float] [float]: fetches the forecast for the place at [float] [float] coordinates.
 - - "-update" or "-u": fetches the current forecast and updates hourly with the respective forecast.
 - - "-simple" or "-s" + [int] (optional): prints data in a simplified format: time, temprature, wind, rain. Optional argument for number of data collation sets printed.
+- - "-saveLocation" or "-sl" + [string] [float] [float]: saves the [float] [float] coordinates and [string] placename in a file which later can be used similarly to the placename argument (see "-loadLocation" argument)
+- - "-loadLocation" or "-ll" + [string]: looks for [string] locations saved in a local file with the aruments above. For changes to the file, simply open it in Vim or Notepad.
 - - "-help" or "-h": prints this help text.
 
 ## My Thoughts
@@ -36,5 +38,4 @@ The more I used the program the more I felt it could be improved and give more a
 ### TODO:
 - got -2 hours posts and did not update when given new hour (10th aug), recheck if fixed at midnight, (not fixed)
 - stopped at 8 posts, (probs paused as a background task by Windows), posted +4 (2 hours more than expected) when ctrl + c, when ran again, printed all posts in array
-- hitting 23 +1 prints the rest of the array (24 post per day, 3 days)
 - check spelling

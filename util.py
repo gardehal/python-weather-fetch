@@ -177,3 +177,47 @@ class Util:
             currenthours = "0" + str(currenthours)
 
         return int(currenthours)
+
+    # Write to a file
+    def saveLocationToFile(filename, message, path="./"):
+        fileExists = False
+        try:
+            with open(filename, "r") as file:
+                fileExists = True
+        except FileNotFoundError:
+            fileExists = False
+
+        if(fileExists is True):
+            # Need a check to see if location exists
+            place = message.split()[0]
+            res = Util.getLocaionFromFile(filename, place)
+            print(res)
+            if(res is not None):
+                print("Place \"" + place + "\" already exists in file.")
+                return False
+
+        try:
+            fullMessage = ("\n" if fileExists else "") + message
+            with open(path + filename, "a") as file:
+                file.write(fullMessage) 
+
+            file.close() 
+            return True
+        except:
+            print("Error reading file " + filename)
+            return False
+
+    # Write to a file
+    def getLocaionFromFile(filename, placename, path="./"):
+        res = None
+        try:
+            with open(filename, "r") as file:
+                for line in file:
+                    if placename == line.split()[0]:
+                        res = line
+
+            file.close() 
+        except:
+            print("Error reading file " + filename)
+
+        return res
