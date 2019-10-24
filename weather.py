@@ -17,17 +17,17 @@ except ImportError:
 nArg = len(sys.argv)
 
 # Defaults
-# Coordinates
-# Oslo
-lat = "59.91"
-lon = "10.75"
-
 logId = 2
 printDays = 2
 autoUpdate = False
 simpleData = False
 simpleDataCollations = 4
 locationFilename = "locations.txt"
+
+# Fist line in locationFilename
+defaultLocation = util.Util.getLocaionFromFile(locationFilename, 1)
+lat = defaultLocation.split()[1]
+lon = defaultLocation.split()[2]
 
 iArg = 1
 while iArg < nArg:
@@ -92,8 +92,7 @@ while iArg < nArg:
         res = util.Util.saveLocationToFile(locationFilename, toSave.lower())
 
         print("Save location \"" + savePlacename + "\" " + ("successful." if res else "failed."))
-        # iArg += 4
-        quit()
+        iArg += 3
 
     # Save a location and cordinates for quick usage
     elif(arg == "-ll" or arg == "-loadLocation"):
@@ -118,8 +117,7 @@ while iArg < nArg:
             lat = res.split()[1]
             lon = res.split()[2]
         
-        iArg += 2
-        # quit()
+        iArg += 1
 
     # Help
     elif(arg == "-h" or arg == "-help"):

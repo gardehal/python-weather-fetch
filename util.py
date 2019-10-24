@@ -191,7 +191,6 @@ class Util:
             # Need a check to see if location exists
             place = message.split()[0]
             res = Util.getLocaionFromFile(filename, place)
-            print(res)
             if(res is not None):
                 print("Place \"" + place + "\" already exists in file.")
                 return False
@@ -213,7 +212,9 @@ class Util:
         try:
             with open(filename, "r") as file:
                 for line in file:
-                    if placename == line.split()[0]:
+                    if(placename is 1):
+                        return line;
+                    if(placename == line.split()[0]):
                         res = line
 
             file.close() 
