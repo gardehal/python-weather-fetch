@@ -39,3 +39,5 @@ The more I used the program the more I felt it could be improved and give more a
 - got -2 hours posts and did not update when given new hour (10th aug), recheck if fixed at midnight, (not fixed)
 - stopped at 8 posts, (probs paused as a background task by Windows), posted +4 (2 hours more than expected) when ctrl + c, when ran again, printed all posts in array
 - check spelling
+- reuse more code, take more advantage of methods
+- tests

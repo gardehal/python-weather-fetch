@@ -14,8 +14,6 @@ try:
 except ImportError:
     googlemaps_present = False
 
-nArg = len(sys.argv)
-
 # Defaults
 logId = 2
 printDays = 2
@@ -29,20 +27,21 @@ defaultLocation = util.Util.getLocaionFromFile(locationFilename, 1)
 lat = defaultLocation.split()[1]
 lon = defaultLocation.split()[2]
 
-iArg = 1
-while iArg < nArg:
-    arg = sys.argv[iArg]
+argC = len(sys.argv)
+argIndex = 1
+while argIndex < argC:
+    arg = sys.argv[argIndex]
     if(arg == "-pn" or arg == "-placename"):
         if(googlemaps_present):
             try:
                 print("Getting location...")
-                geocode_res = gmaps_key.geocode(sys.argv[iArg + 1] + " norway")
+                geocode_res = gmaps_key.geocode(sys.argv[argIndex + 1] + " norway")
                 # print(geocode_res[0])
                 print("Showing results for: " + geocode_res[0]["formatted_address"])
                 lat = "%.2f"%(geocode_res[0]["geometry"]["location"]["lat"])
                 lon = "%.2f"%(geocode_res[0]["geometry"]["location"]["lng"])
                 
-                iArg += 1
+                argIndex += 1
             except:
                 print("There was an error getting the coordinates from the placename.")
                 quit()
@@ -52,59 +51,63 @@ while iArg < nArg:
 
     # Use coordinates from arguments
     elif(arg == "-c" or arg == "-coordinates"):
-        lat = "%.2f"%(float(sys.argv[iArg + 1]))
-        lon = "%.2f"%(float(sys.argv[iArg + 2]))
+        try:
+            lat = "%.2f"%(float(sys.argv[argIndex + 1]))
+            lon = "%.2f"%(float(sys.argv[argIndex + 2]))
+        except ValueError:
+            print("Coordinates arguments are not valid, must be: latitude (float), longitude (float)")
+            quit()
         
-        iArg += 2
+        argIndex += 2
 
     # Enable automatic update for current and next hour
     elif(arg == "-u" or arg == "-update"):
         autoUpdate = True
         
-        iArg += 1
+        argIndex += 1
 
     # Print data in a simplified format
     elif(arg == "-s" or arg == "-simple"):
         simpleData = True
 
-        if(nArg > iArg + 1):
-            simpleDataCollations = sys.argv[iArg + 1]
-            iArg += 1
+        if(argC > argIndex + 1):
+            simpleDataCollations = sys.argv[argIndex + 1]
+            argIndex += 1
         
-        iArg += 1
+        argIndex += 1
 
     # Save a location and cordinates for quick usage
     elif(arg == "-sl" or arg == "-saveLocation"):
         # If the remaining arguments are fewer than 3
-        if(nArg - iArg < 4): 
+        if(argC - argIndex < 4): 
             print("Too few arguments to save a location, need 3: name (string), latitude (float), longitude (float)")
             quit()
 
         try:
-            savePlacename = str(sys.argv[iArg + 1])
-            saveLat = "%.2f"%(float(sys.argv[iArg + 2]))
-            saveLon = "%.2f"%(float(sys.argv[iArg + 3]))
+            savePlacename = str(sys.argv[argIndex + 1])
+            saveLat = "%.2f"%(float(sys.argv[argIndex + 2]))
+            saveLon = "%.2f"%(float(sys.argv[argIndex + 3]))
         except ValueError:
-            print("Arguments to save location are not valid, must be name (string), latitude (float), longitude (float)")
+            print("Arguments to save location are not valid, must be: name (string), latitude (float), longitude (float)")
             quit()
 
         toSave = savePlacename + " " + saveLat + " " + saveLon
         res = util.Util.saveLocationToFile(locationFilename, toSave.lower())
 
         print("Save location \"" + savePlacename + "\" " + ("successful." if res else "failed."))
-        iArg += 3
+        argIndex += 3
 
     # Save a location and cordinates for quick usage
     elif(arg == "-ll" or arg == "-loadLocation"):
         # If the remaining arguments are fewer than 1
-        if(nArg - iArg < 2): 
+        if(argC - argIndex < 2): 
             print("Too few arguments to save a location, need 1: name (string)")
             quit()
 
         try:
-            loadPlacename = str(sys.argv[iArg + 1])
+            loadPlacename = str(sys.argv[argIndex + 1])
         except ValueError:
-            print("Arguments to save location are not valid, must be name (string)")
+            print("Arguments to save location are not valid, must be: name (string)")
             quit()
         
         print("Getting coordinates for \"" + loadPlacename + "\"")
@@ -117,7 +120,7 @@ while iArg < nArg:
             lat = res.split()[1]
             lon = res.split()[2]
         
-        iArg += 1
+        argIndex += 1
 
     # Help
     elif(arg == "-h" or arg == "-help"):
@@ -140,7 +143,7 @@ while iArg < nArg:
     else:
         print("Argument not recognized: \"" + arg + "\", please see documentation or run with \"-help\" for help.")
         quit()
-    iArg += 1
+    argIndex += 1
 
 # Fetch and parse
 # https://api.met.no/weatherapi/probabilityforecast/1.1/?lat=59.91&lon=10.75
@@ -313,10 +316,6 @@ i = 0
 j = 0
 while i < 32:
     parsed = util.Util.praseForecast(posts[i])
-    
-    if(len(parsed) < 1):
-        print("Error: could not get forecast")
-        quit()
 
     if(int(parsed["time"][11:13]) == currenthour):
         post = util.Util.formatForecast(parsed, logId)
@@ -336,12 +335,7 @@ while i < 23:
     j = 0
     k = 0
     while j < 128:
-        # print("j " + str(j))
         parsed = util.Util.praseForecast(posts[i + j])
-
-        if(len(parsed) < 1):
-            print("Error: could not get forecast")
-            quit()
 
         if(int(parsed["time"][11:13]) == nHour and k < 2):
             post = util.Util.formatForecast(parsed, logId)
@@ -356,6 +350,3 @@ while i < 23:
     if(nHour > 23):
         nHour = 0
     i += 1
-
-# TODO  
-# print("Print for hour X:")

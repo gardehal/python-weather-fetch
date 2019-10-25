@@ -134,7 +134,7 @@ class Util:
         if("windSpeedName" in forecast):
             printString += ("Wind: \t\t" + forecast["windSpeedName"] + ": " + forecast["windSpeedMps"] + mps + "from " + forecast["windDirectionDeg"] + " degrees (" + forecast["windDirectionName"] + ")" + endl)
 
-        if("windSpeedName" in forecast and logId > 0):
+        if("windGust" in forecast and logId > 0):
             printString += ("Gusts: \t\t" + forecast["windGust"] + mps + endl)
     
         if("humidity" in forecast and logId > 0):
