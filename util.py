@@ -3,6 +3,11 @@ from datetime import datetime
 
 class Util:
     def praseForecast(post):
+        """
+        Tur the string post from URL response into a dict. \n
+        string post
+        """
+
         d = dict()
         location = post.find("location")
 
@@ -114,6 +119,12 @@ class Util:
         return d
 
     def formatForecast(forecast, logId):
+        """
+        Format a string that can be printed from the forecast dict, omitting or including data based on logId. \n
+        dict forecast \n
+        int logId
+        """
+
         fromTime = forecast["time"].replace("T", ", ")
         fromTime = fromTime.replace("Z", "")
 
@@ -171,6 +182,10 @@ class Util:
 
     # Get current hour only
     def getHour():
+        """
+        Returns the current hour (24h) only.
+        """
+
         currenttime = str(datetime.now().time())
         currenthours = int(currenttime[0:2])
         if(currenthours < 10):
@@ -180,6 +195,13 @@ class Util:
 
     # Write to a file
     def saveLocationToFile(filename, message, path="./"):
+        """
+        Save a location with coordinates to a local file. \n
+        string filename \n
+        string message \n
+        string path (optional)
+        """
+
         fileExists = False
         try:
             with open(filename, "r") as file:
@@ -208,6 +230,13 @@ class Util:
 
     # Write to a file
     def getLocaionFromFile(filename, placename, path="./"):
+        """
+        Get coordinates for a placename from local file. \n
+        string filename \n
+        string placename \n
+        string path (optional)
+        """
+
         res = None
         try:
             with open(filename, "r") as file:
