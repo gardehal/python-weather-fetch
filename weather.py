@@ -174,7 +174,7 @@ class Main:
         print("Generated: \t" + generated)
 
         if(autoUpdate):
-            Main.initAutoUpdate(posts)
+            Main.initAutoUpdate(posts, logId)
         elif(simpleData):
             Main.simplePrint(simpleDataCollations, posts)
         else:
@@ -184,64 +184,63 @@ class Main:
 
 
     # When automatically update, check every few minutes if hour have updated, if true print new post
-    def initAutoUpdate(posts):
+    def initAutoUpdate(posts, logId):
         """
-        WIP \n
         Print relevant data for current hour, every hour. \n
-        dict posts
+        dict posts \n
+        int logId
         """
 
-        # Outer loop for number of printed instances
-        i = 15
-        while i < i + 1:
+        print("Printing hourly updates. \n")
+
+        lastHourPrintedFor = None
+
+        # Outer loop controls data array
+        i = 0
+        while i < len(posts):
+
+            # Get time
+            currentHour = 00 #util.Util.getHour()
+
+            # If we should wait, sleep for 5 minutes, continue and try again
+            if(lastHourPrintedFor != None and lastHourPrintedFor == currentHour):
+                time.sleep(300)
+                continue
+
+            # Get a post
+            post = util.Util.praseForecast(posts[i])
+
+            # If there is no lowClouds in post, it's a minor post: skip, or if the post does not have the same time (hour) as currentHour: skip
+            if("lowClouds" not in post or currentHour != int(post["time"][11:13])):
+                i += 1
+                continue
+
             print("\n" * 16)
             print("Automatically updating every hour. \n")
-                
+
+            # Try/Catch so we can break the outer loop from the inner
             try:
-                # Inner loop for getting the minor posts between majors
-                j = 0
-                while j < 5:
-                    nextHour = util.Util.getHour() + 1
+                # Inner loop to control printing of posts (1 major and 3-4 minor)
+                j = i
+                while j < i + 5:
+                    lastHourPrintedFor = currentHour
+                    currentPost = util.Util.praseForecast(posts[j])
 
-                    # probs with nexth > 23, or nexhour = 01 compared to posts[0]["time"] = 23
-                    # ++i?
-
-                    if(nextHour > 23):
-                        nextHour = 0
-
-                    # print("nex " + str(nextHour))
-                    # print("i " + str(i))
-                    # print("j " + str(j))
-
-                    parsed = util.Util.praseForecast(posts[i + j])
-
-                    # Sleep when we reach the next major post
-                    if(int(parsed["time"][11:13]) > nextHour and "temprature" not in parsed):
-                        time.sleep(300)
-                        # print("continue")
-                        continue
-
-                    # Continue outer loop if we reach a major post prematurely
-                    if(j > 1 and "temprature" in parsed):
-                        print("break")
+                    # When we reach the end of the minor posts, raise StopIteration, continueing the outer loop
+                    if(j > i + 1 and "lowClouds" in currentPost):
                         raise StopIteration
                         
-                    post = util.Util.formatForecast(parsed, logId)
-                    print(post)
+                    formattedPost = util.Util.formatForecast(currentPost, logId)
+                    print(formattedPost)
 
                     j += 1
+                
             except StopIteration:
                 uselessVar = True
 
-            # TODO
-            # if(i - 5 > len(totalPosts))
-                # quit, rerun, or fetch more
-
-            # TODO
-            # When hour first updated, reset sleeper to 59 min to reduce check and resources used
-
             i += j
-
+        
+        # TODO: Rerun arguments to restart url fetch and continue this loop. Might want to reduce the length of posts array as it has approximate data for post later in array
 
     # Loop over data, one main post and minor posts up to the next main post i one set
     # 6 sets of data is one collation (excluding the first collation, which can vary from 0 to 6 sets depending on when queried)
