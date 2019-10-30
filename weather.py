@@ -3,6 +3,7 @@ from urllib.request import urlopen
 import xml.etree.ElementTree as ET
 import util
 import time
+import os
 
 # Check if googlemaps is installed, if not, skip code which require it
 # Based on code from rakslices answer from https://stackoverflow.com/questions/50844210/check-if-pip-is-installed-on-windows-using-python-subprocess
@@ -198,12 +199,11 @@ class Main:
         # Outer loop controls data array
         i = 0
         while i < len(posts):
-
             # Get time
-            currentHour = 00 #util.Util.getHour()
+            currentHour = util.Util.getHour()
 
             # If we should wait, sleep for 5 minutes, continue and try again
-            if(lastHourPrintedFor != None and lastHourPrintedFor == currentHour):
+            if(lastHourPrintedFor is not None and lastHourPrintedFor is currentHour):
                 time.sleep(300)
                 continue
 
@@ -211,9 +211,14 @@ class Main:
             post = util.Util.praseForecast(posts[i])
 
             # If there is no lowClouds in post, it's a minor post: skip, or if the post does not have the same time (hour) as currentHour: skip
-            if("lowClouds" not in post or currentHour != int(post["time"][11:13])):
+            if("lowClouds" not in post or currentHour is not int(post["time"][11:13])):
                 i += 1
                 continue
+
+            # Once the data start alterating between major and minor posts we have reached speculative data, (about 3 days in the future)
+            # Break loop, which will go to the end of the method and rerun the program with the same arguments and gets new data
+            if("lowClouds" not in util.Util.praseForecast(posts[i + 1]) and "lowClouds" in util.Util.praseForecast(posts[i + 2])):
+                break
 
             print("\n" * 16)
             print("Automatically updating every hour. \n")
@@ -240,7 +245,14 @@ class Main:
 
             i += j
         
-        # TODO: Rerun arguments to restart url fetch and continue this loop. Might want to reduce the length of posts array as it has approximate data for post later in array
+        # When we reach end of data array, rerun the 
+        print("Reached end of forecast array, requesting new data... \n")
+
+        argList = "python "
+        for arg in sys.argv:
+            argList += arg + " "
+
+        os.system(argList)
 
     # Loop over data, one main post and minor posts up to the next main post i one set
     # 6 sets of data is one collation (excluding the first collation, which can vary from 0 to 6 sets depending on when queried)
