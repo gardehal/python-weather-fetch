@@ -45,7 +45,8 @@ class Main:
                         lat = "%.2f"%(geocode_res[0]["geometry"]["location"]["lat"])
                         lon = "%.2f"%(geocode_res[0]["geometry"]["location"]["lng"])
                         
-                        argIndex += 1
+                        argIndex += 2
+                        continue
                     except:
                         print("There was an error getting the coordinates from the placename.")
                         quit()
@@ -62,23 +63,26 @@ class Main:
                     print("Coordinates arguments are not valid, must be: latitude (float), longitude (float)")
                     quit()
                 
-                argIndex += 2
+                argIndex += 3
+                continue
 
             # Enable automatic update for current and next hour
             elif(arg == "-u" or arg == "-update"):
                 autoUpdate = True
-                
+
                 argIndex += 1
+                continue
 
             # Print data in a simplified format
             elif(arg == "-s" or arg == "-simple"):
                 simpleData = True
 
-                if(argC > argIndex + 1):
+                if(argC > argIndex + 1 and sys.argv[argIndex + 1][0] != "-"):
                     simpleDataCollations = sys.argv[argIndex + 1]
                     argIndex += 1
-                
+
                 argIndex += 1
+                continue
 
             # Save a location and cordinates for quick usage
             elif(arg == "-sl" or arg == "-saveLocation"):
@@ -98,8 +102,9 @@ class Main:
                 toSave = savePlacename + " " + saveLat + " " + saveLon
                 res = util.Util.saveLocationToFile(locationFilename, toSave.lower())
 
-                print("Save location \"" + savePlacename + "\" " + ("successful." if res else "failed."))
-                argIndex += 3
+                print("Save location \"" + savePlacename + "\" was " + ("successful." if res else "failed."))
+
+                quit()
 
             # Save a location and cordinates for quick usage
             elif(arg == "-ll" or arg == "-loadLocation"):
@@ -124,7 +129,8 @@ class Main:
                     lat = res.split()[1]
                     lon = res.split()[2]
                 
-                argIndex += 1
+                argIndex += 2
+                continue
 
             # Help
             elif(arg == "-h" or arg == "-help"):
@@ -147,6 +153,7 @@ class Main:
             else:
                 print("Argument not recognized: \"" + arg + "\", please see documentation or run with \"-help\" for help.")
                 quit()
+
             argIndex += 1
 
         # Fetch and parse
@@ -188,7 +195,7 @@ class Main:
     def initAutoUpdate(posts, logId):
         """
         Print relevant data for current hour, every hour. \n
-        dict posts \n
+        list posts \n
         int logId
         """
 
@@ -262,7 +269,7 @@ class Main:
         """
         Print n number (simpleDataCollations) of 6 hour instances of data that contains temp, wind and rain (if any). \n
         int simpleDataCollations \n
-        dict posts
+        list posts
         """
         hourInterval = 6 # Range of hours, like 06 to 12 is 6 
         simpleDataCollations = int(simpleDataCollations) # Number of posts printed
@@ -342,7 +349,7 @@ class Main:
     def defaultPrint(posts, logId):
         """
         Print which includes all data for 24 hours forward. \n
-        dict posts \n
+        list posts \n
         int logId
         """
 
