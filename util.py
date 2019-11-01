@@ -194,12 +194,11 @@ class Util:
         return int(currenthours)
 
     # Write to a file
-    def saveLocationToFile(filename, message, path="./"):
+    def saveLocationToFile(filename, message):
         """
         Save a location with coordinates to a local file. \n
         string filename \n
         string message \n
-        string path (optional)
         """
 
         fileExists = False
@@ -219,7 +218,7 @@ class Util:
 
         try:
             fullMessage = ("\n" if fileExists else "") + message
-            with open(path + filename, "a") as file:
+            with open(filename, "a") as file:
                 file.write(fullMessage) 
 
             file.close() 
@@ -229,12 +228,11 @@ class Util:
             return False
 
     # Write to a file
-    def getLocaionFromFile(filename, placename, path="./"):
+    def getLocaionFromFile(filename, placename):
         """
         Get coordinates for a placename from local file. \n
         string filename \n
         string placename \n
-        string path (optional)
         """
 
         res = None

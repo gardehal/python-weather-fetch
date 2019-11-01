@@ -38,3 +38,4 @@ The more I used the program the more I felt it could be improved and give more a
 ### TODO:
 - check spelling
 - tests
+- get location from file path (not working outside root directory)

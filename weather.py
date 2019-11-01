@@ -25,9 +25,10 @@ class Main:
         simpleData = False
         simpleDataCollations = 4
         locationFilename = "locations.txt"
+        path = sys.path[0]
 
         # Fist line in locationFilename
-        defaultLocation = util.Util.getLocaionFromFile(locationFilename, 1)
+        defaultLocation = util.Util.getLocaionFromFile(os.path.join(path, locationFilename), 1)
         lat = defaultLocation.split()[1]
         lon = defaultLocation.split()[2]
 
@@ -100,7 +101,7 @@ class Main:
                     quit()
 
                 toSave = savePlacename + " " + saveLat + " " + saveLon
-                res = util.Util.saveLocationToFile(locationFilename, toSave.lower())
+                res = util.Util.saveLocationToFile(os.path.join(path, locationFilename), toSave.lower())
 
                 print("Save location \"" + savePlacename + "\" was " + ("successful." if res else "failed."))
 
@@ -121,7 +122,7 @@ class Main:
                 
                 print("Getting coordinates for \"" + loadPlacename + "\"")
 
-                res = util.Util.getLocaionFromFile(locationFilename, loadPlacename.lower())
+                res = util.Util.getLocaionFromFile(os.path.join(path, locationFilename), loadPlacename.lower())
                 if(res is None):
                     print("Could not load location")
                     quit()
