@@ -324,11 +324,9 @@ class Main:
                     nWind += 1
 
                 # Get rain from set
-                if("value" in parsed):
-                    prec += float(parsed["value"])
+                if("precipitationValue" in parsed):
+                    prec += float(parsed["precipitationValue"])
                     nPrec += 1
-                    print("prec " + str(prec))
-                    print("nprec " + str(nPrec))
 
                 simpleDataIndex += 1
 
