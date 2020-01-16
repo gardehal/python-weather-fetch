@@ -3,6 +3,7 @@
 A simple python program that fetches data from [MET Weather API](https://api.met.no/weatherapi) and returns forecast in various forms.
 
 ## Usage (Windows)
+
 1. [Install Python](https://www.python.org/downloads/)
 2. Make sure Python is defined on PATH
 3. Navigate to folder in CLI
@@ -15,6 +16,7 @@ Optional: Add Googlemaps to enter placename for custom location (remember quotes
 4. $ python weather.py "Henrik Ibsens gate 1"
 
 ## Help
+
 - To use Googles Geocoding API you must install it on your computer. This is optional and the guide is in "readme.md"
 - Fetch uses Metrologisk Institutt API and can only fetch weather from Norwegian territory. 
 - Run by following "Usage" instructions in "readme.md" then enter:
@@ -35,7 +37,8 @@ I wanted to begin to learn Python as I've seen some buzz around it but never got
 
 The more I used the program the more I felt it could be improved and give more and more detailed information to give a better overview of the weather and for longer.
 
-### TODO:
+## TODO:
+
 - check spelling
 - tests
 - get location from file path (not working outside root directory)
